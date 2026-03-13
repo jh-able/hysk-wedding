@@ -1278,21 +1278,21 @@
            // 클릭 이벤트: 전체 40장 중 해당 인덱스로 이동
             galleryItem.addEventListener("click", function () {
                 const modal = document.getElementById("imageModal");
-                // 1. 모달을 띄우되, 눈에 보이지 않게 투명도를 0으로 설정
+                // 1. 모달을 눈에 보이지 않게 투명도를 0으로 설정하고 화면에 띄움
                 modal.style.opacity = "0";
                 modal.style.display = "flex";
                 document.body.style.overflow = 'hidden';
                 if (swiper) {
-                    // 2. 모달이 화면에 배치된 후(display:flex) Swiper 크기 재계산 및 이동
+                    // 2. Swiper 갱신 및 터치한 사진으로 즉시 이동
                     swiper.update(); 
-                    swiper.slideToLoop(i - 1, 0); // 0ms로 즉시 이동
+                    swiper.slideToLoop(i - 1, 0, false); // 세 번째 인자에 false를 추가하여 불필요한 애니메이션 차단
                 }
-                // 3. 브라우저가 화면을 그릴 시간을 준 뒤 투명도 원상복구
-                requestAnimationFrame(() => {
+                // 3. Swiper가 슬라이드를 완전히 이동시킬 아주 짧은 시간을 준 뒤 복구 (핵심 수정 사항)
+                setTimeout(() => {
                     modal.style.opacity = "1";
-                });
+                }, 50); // 50ms 후 투명도 복구하여 첫 사진 깜빡임 해결
             });
-        } // <- createThumbnail 함수를 닫는 괄호 추가
+        } 
         // 1. 모든 슬라이드를 먼저 생성 (사용자 요청: 9장만 보일 때도 전체 슬라이드 가능하도록)
         for (let i = 1; i <= totalImages; i++) {
             createSwiperSlide(i);
@@ -1396,6 +1396,7 @@
     </script>
 
 </body>
+
 
 
 
